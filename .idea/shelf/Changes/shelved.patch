@@ -1,0 +1,191 @@
+Index: src/Lambda02.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Lambda02.java b/src/Lambda02.java
+new file mode 100644
+--- /dev/null	(date 1669566190013)
++++ b/src/Lambda02.java	(date 1669566190013)
+@@ -0,0 +1,181 @@
++import java.util.ArrayList;
++import java.util.Arrays;
++import java.util.List;
++import java.util.Optional;
++
++public class Lambda02 {
++    public static void main(String[] args) {
++        List<Integer> sayi = new ArrayList<>(Arrays.asList(4, 2, 6, 11, -5, 7, 3, 15));
++        ciftKarePrint(sayi);
++        System.out.println();
++        tekKuplerPrint(sayi);
++        System.out.println();
++        enBuyukSayiPrint(sayi);
++        System.out.println();
++        structuredMaxElBul(sayi);
++        System.out.println();
++        ciftElKarePrint(sayi);
++        System.out.println();
++        elTopla(sayi);
++        System.out.println();
++        ciftcarp(sayi);
++        System.out.println();
++        minBul(sayi);
++        System.out.println();
++        ciftcarp(sayi);
++        System.out.println();
++        ciftkareKbSortrint(sayi);
++    }
++
++    // Task-1 : Functional Programming ile listin cift elemanlarinin  karelerini
++    // ayni satirda aralarina bosluk bırakarak print ediniz
++
++    public static void ciftKarePrint(List<Integer> sayi) {
++        sayi.
++                stream().
++                filter(Lambda01::cift).//4,2,6
++                map(t -> t * t).//16,4,36--stream icindeki elemanlari baska degerlere ceviriyor
++                forEach(Lambda01::yazdir);
++
++    }
++
++    // Task 2 : Functional Programming ile listin tek elemanlarinin
++    // kuplerinin bir fazlasini ayni satirda aralarina bosluk birakarak print edi
++    public static void tekKuplerPrint(List<Integer> sayi) {
++        sayi.
++                stream().
++                filter(Lambda02::tek).
++                map(Lambda02::kupBirFazla).
++                forEach(Lambda01::yazdir);
++
++
++    }
++
++    public static boolean tek(int a) {
++        return a % 2 != 0;
++    }
++
++    public static int kupBirFazla(int a) {
++        return (a * a * a) + 1;
++    }
++
++    // Task-3 : Functional Programming ile listin cift elemanlarinin
++// karekoklerini ayni satirda aralarina bosluk birakarak yazdiriniz
++    public static void ciftKareKokPrint(List<Integer> sayi) {
++        sayi.
++                stream().
++                filter(Lambda01::cift).
++                map(Math::sqrt).
++                forEach(t -> System.out.print(t + " "));
++    }
++
++    // Task-4 : list'in en buyuk elemanini yazdiriniz
++    public static void enBuyukSayiPrint(List<Integer> sayi) {
++
++        Optional<Integer> maxSayi = sayi.//sonuc null olabilir o yuzen sol tarafi yazdik
++                stream().
++                reduce(Math::max);
++        System.out.println(maxSayi);  //eger benim resultim tek bir deger ise o zaman reduse terminali opr. kullanilir
++
++    }
++
++    //Structured yapi ile cozelim
++    public static void structuredMaxElBul(List<Integer> sayi) {
++        int max = Integer.MAX_VALUE;
++        System.out.println("max = " + max);
++        for (int i = 0; i < sayi.size(); i++) {
++            if (sayi.get(i) > max) max = sayi.get(i);//tek satirda yazdirirsak {} gerek yok
++
++        }
++        System.out.println("En buyuk sayi: " + max);
++    }
++// Task-5 : List'in cift elemanlarin karelerinin en buyugunu print ediniz
++
++    //1.yol
++    public static void ciftElKarePrint(List<Integer> sayi) {
++        System.out.println(sayi.
++                stream().
++                filter(Lambda01::cift).
++                map(a -> a * a).
++                reduce(Integer::max));//reduce(Math::max) a gore daha hizlidir
++
++//2.yol
++        Optional<Integer> x = sayi.
++                stream().
++                filter(Lambda01::cift).
++                map(t -> t * t).
++                reduce(Integer::max);
++        System.out.println(x);
++
++    }
++
++    // Task-6: List'teki tum elemanlarin toplamini yazdiriniz.Lambda Expression...
++    public static void elTopla(List<Integer> sayi) {//toplam bir deger o zaman reduce kullanacagiz
++        int toplam = sayi.
++                stream().
++                reduce(0, (a, b) -> a + b);//toplamadali etkisiz elemani 0 yazdik
++ /*
++* a ilk degerini her zaman atanan degerden (ilk parametre) alır,
++    bu örnekte 0 oluyor
++* b degerini her zamana  stream()'dan akısdan alır
++* a ilk degerinden sonraki her değeri action(işlem)'dan alır
++
++*/
++    }
++
++    //Task-7:Listteki cift elemanlarin carpimini yazdiriniz
++    public static void ciftcarp(List<Integer> sayi) {
++        //1.yol method referance
++        sayi.
++                stream().
++                filter(Lambda01::cift).
++                reduce(Math::multiplyExact);
++
++
++        //2.yol lambda expression//
++        sayi.
++                stream().
++                filter(Lambda01::cift).
++                reduce(1, (a, b) -> (a * b));
++        // 1 oldugundan sonuc null gelme ihtimali yok
++
++    }
++
++    //Task-8:listedeki elemanlardan en kucugunu yazdiriniz
++    public static void minBul(List<Integer> sayi) {
++        //1
++        System.out.println(sayi.
++                stream().
++                reduce(Integer::min));
++
++        //2
++        System.out.println(sayi.
++                stream().
++                reduce(Lambda02::byMiracMin));
++
++    }
++
++    public static int byMiracMin(int a, int b) {
++        return a < b ? a : b;
++    }
++
++    // Task-9 : List'teki 5'ten buyuk en kucuk tek sayiyi print ediniz.
++    public  static void bestenBykTekEnKucuk(List<Integer> sayi){
++       sayi.stream().filter(a->(a > 5 ) && (a%2== 1)).reduce(Lambda02::byMiracMin);
++    }
++// Task-10 : list'in cift  elemanlarinin karelerini  kucukten buyuge print ediniz.
++public  static void ciftkareKbSortrint  (List<Integer> sayi){
++        sayi.
++                stream().
++                filter(Lambda01::cift).
++                map(t->t*t).
++                sorted().
++                forEach(Lambda01::yazdir);
++}
++}
++
++
++
++
++
++
